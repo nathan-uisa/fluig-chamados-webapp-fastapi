@@ -43,6 +43,7 @@ htmlcov/
 .xlsx_files/
 pln1.xlsx
 /logs/
+
 temp.txt
 .nox/
 .coverage

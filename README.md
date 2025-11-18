@@ -101,10 +101,10 @@ O servidor estará disponível em: `http://127.0.0.1:3000`
 
 ### Exemplo de Planilha
 
-| A (Name/Path) | B (Message) | C (Size GB) | D (GMUD) |
-|---------------|------------|-------------|----------|
-| arquivo1.vmdk | Verificar | 100 | 123456 |
-| arquivo2.vmdk | Verificar | 200 | 123457 |
+|  CABEÇALHO A  |  CABEÇALHO B  |  CABEÇALHO C  |  CABEÇALHO D  |
+|---------------|---------------|---------------|---------------|
+| LINHA 1 COL A | LINHA 1 COL B | LINHA 1 COL C | LINHA 1 COL D |
+| LINHA 2 COL A | LINHA 2 COL B | LINHA 2 COL C | LINHA 2 COL D |
 
 Com o título: `Chamado <A>` e descrição: `Arquivo <A> com <C> GB - GMUD: <D>`, serão criados 2 chamados com os valores substituídos.
 
