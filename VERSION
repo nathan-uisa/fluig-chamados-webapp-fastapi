@@ -1,0 +1,12 @@
+1.0
+
+Funcionalidades:
+- Login com Google OAuth
+- Validação de domínio (@uisa.com.br)
+- Criação de chamados individuais
+- Geração em lote via planilha Excel
+- Prévia de chamados antes de criar
+- Substituição de placeholders (<A>, <B>, etc.)
+- Opção para ignorar primeira linha (cabeçalho)
+- Controle de quantidade de chamados
+- Sessão de usuário persistente
