@@ -16,14 +16,65 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gerenciar upload de planilha
     if (planilhaInput) {
-        planilhaInput.addEventListener('change', function(e) {
+        planilhaInput.addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (file) {
-                statusDiv.textContent = '✓ Arquivo selecionado: ' + file.name;
+                // Mostrar status de carregamento
+                statusDiv.textContent = '⏳ Carregando planilha...';
                 statusDiv.style.display = 'block';
-                qtdGroup.style.display = 'block';
-                ignorarCabecalhoGroup.style.display = 'block';
-                previewButtonGroup.style.display = 'block';
+                statusDiv.style.color = 'var(--text-secondary)';
+                statusDiv.style.background = 'var(--bg-section)';
+                statusDiv.style.border = '1px solid var(--border-primary)';
+                planilhaInput.disabled = true;
+                
+                try {
+                    // Criar FormData para enviar o arquivo
+                    const formData = new FormData();
+                    formData.append('planilha', file);
+                    
+                    // Enviar arquivo para processamento
+                    const response = await fetch('/chamado/carregar-planilha', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.sucesso) {
+                        // Sucesso: mostrar mensagem de confirmação
+                        statusDiv.textContent = '✓ ' + (data.mensagem || 'Arquivo selecionado: ' + file.name);
+                        statusDiv.style.color = 'var(--success-text)';
+                        statusDiv.style.background = 'var(--success-bg)';
+                        statusDiv.style.border = '1px solid var(--success-border)';
+                        qtdGroup.style.display = 'block';
+                        ignorarCabecalhoGroup.style.display = 'block';
+                        previewButtonGroup.style.display = 'block';
+                    } else {
+                        // Erro: mostrar mensagem de erro
+                        statusDiv.textContent = '✗ ' + (data.erro || 'Erro ao carregar planilha');
+                        statusDiv.style.color = 'var(--error-text)';
+                        statusDiv.style.background = 'var(--error-bg)';
+                        statusDiv.style.border = '1px solid var(--error-border)';
+                        qtdGroup.style.display = 'none';
+                        ignorarCabecalhoGroup.style.display = 'none';
+                        previewButtonGroup.style.display = 'none';
+                        // Limpar seleção do arquivo
+                        planilhaInput.value = '';
+                    }
+                } catch (error) {
+                    // Erro de rede ou outro erro
+                    statusDiv.textContent = '✗ Erro ao carregar planilha: ' + error.message;
+                    statusDiv.style.color = 'var(--error-text)';
+                    statusDiv.style.background = 'var(--error-bg)';
+                    statusDiv.style.border = '1px solid var(--error-border)';
+                    qtdGroup.style.display = 'none';
+                    ignorarCabecalhoGroup.style.display = 'none';
+                    previewButtonGroup.style.display = 'none';
+                    // Limpar seleção do arquivo
+                    planilhaInput.value = '';
+                } finally {
+                    planilhaInput.disabled = false;
+                }
             } else {
                 statusDiv.textContent = '';
                 statusDiv.style.display = 'none';

@@ -31,6 +31,7 @@ class Planilha:
     def carregar_planilha(self):
         self.workbook = openpyxl.load_workbook(self.caminho_arquivo)
         self.sheet = self.workbook.active
+        self.config_temp()
 
     def criar_base_chamados(self):
         self.config_temp()

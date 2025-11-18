@@ -10,3 +10,13 @@ Funcionalidades:
 - Opção para ignorar primeira linha (cabeçalho)
 - Controle de quantidade de chamados
 - Sessão de usuário persistente
+
+
+1.1
+
+Funcionalidades:
+- Criação automática do temp.txt ao carregar planilha na página web
+- Processamento automático da planilha ao selecionar arquivo (sem precisar enviar formulário)
+- Nova rota API para carregamento e processamento de planilha em tempo real
+- Feedback visual em tempo real (carregamento, sucesso, erro) ao selecionar planilha
+- Melhoria na experiência do usuário com validação imediata do arquivo

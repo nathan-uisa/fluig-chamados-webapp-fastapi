@@ -296,6 +296,80 @@ async def criar_chamado(
         )
 
 
+@router.post("/chamado/carregar-planilha", response_class=JSONResponse)
+async def carregar_planilha(request: Request, planilha: UploadFile = File(...)):
+    """
+    Carrega a planilha e cria o temp.txt imediatamente após o upload
+    """
+    user = request.session.get('user')
+    if not user:
+        return JSONResponse(
+            status_code=401,
+            content={"erro": "Usuário não autenticado", "sucesso": False}
+        )
+    
+    if not planilha.filename.endswith('.xlsx'):
+        return JSONResponse(
+            status_code=400,
+            content={"erro": "Apenas arquivos .xlsx são suportados.", "sucesso": False}
+        )
+    
+    try:
+        # Salvar arquivo temporário
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx') as tmp_file:
+            content = await planilha.read()
+            tmp_file.write(content)
+            tmp_path = tmp_file.name
+        
+        try:
+            # Processar planilha e criar temp.txt
+            planilha_obj = Planilha(tmp_path)
+            planilha_obj.carregar_planilha()  # Isso já cria o temp.txt vazio
+            linhas_processadas = planilha_obj.criar_base_chamados()  # Isso preenche o temp.txt
+            
+            # Limpar arquivo temporário da planilha (mas manter temp.txt)
+            os.unlink(tmp_path)
+            
+            if not linhas_processadas:
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "erro": "Erro ao processar planilha. Verifique o formato do arquivo.",
+                        "sucesso": False
+                    }
+                )
+            
+            return JSONResponse(
+                content={
+                    "sucesso": True,
+                    "mensagem": f"Planilha carregada com sucesso! {linhas_processadas} linha(s) processada(s).",
+                    "linhas_processadas": linhas_processadas
+                }
+            )
+            
+        except Exception as e:
+            logger.error(f"Erro ao processar planilha: {str(e)}")
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "erro": f"Erro ao processar planilha: {str(e)}",
+                    "sucesso": False
+                }
+            )
+            
+    except Exception as e:
+        logger.error(f"Erro ao carregar planilha: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "erro": f"Erro ao carregar planilha: {str(e)}",
+                "sucesso": False
+            }
+        )
+
+
 class PreviewRequest(BaseModel):
     """Modelo para requisição de prévia"""
     titulo: str
